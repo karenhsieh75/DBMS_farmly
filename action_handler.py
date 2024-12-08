@@ -1,40 +1,26 @@
 from db_utils import *        
 
 
-# (server)if role == farmer:
-# (server):conn.send(f'[INPUT]Please choose a following action :\n{list_option(farmer_action)}---> '.encode('utf-8'))
-# (server) get_selection(conn, farmer_action)
-# (server) 呼叫相應的函式 farmer_action = {  "view upload history":get_farmer_upload_records(),get_farmer_upload_records_db()
-                        #                  "upload amount to an existing product batch":upload_to_existing_products(),get_farmer_products_db(),insert_product_upload_db()
-                        #                  "create a new product batch and upload products":insert_new_product_and_upload(),insert_new_product_and_upload_db()
-                        #                  "search for markets available for registration":get_open_markets(),get_open_markets_db()
-                        #                  "view market stall registration history":get_farmer_market_registrations(),get_farmer_market_registrations_db()
-                        #                  "register for a new market":register_market(),register_market_db()
-                        #                  "view my rating scores":get_farmer_ratings(),get_farmer_ratings_db()
-#                                       }
+# consumer_action_basic = ['search for product', #step1
+#                    'view cart', #step1
+#                    'view order history',
+#                    'rate a farmer',
+#                    'view past ratings']
 
+# consumer_action_advance_searchforproduct = ['search for product', #step1
+#                    'add this product to cart', #step2
+#                    'view cart', #step1
+#                    'view order history',
+#                    'rate a farmer',
+#                    'view past ratings']
 
-
-consumer_action_basic = ['search for product', #step1
-                   'view cart', #step1
-                   'view order history',
-                   'rate a farmer',
-                   'view past ratings']
-
-consumer_action_advance_searchforproduct = ['search for product', #step1
-                   'add this product to cart', #step2
-                   'view cart', #step1
-                   'view order history',
-                   'rate a farmer',
-                   'view past ratings']
-
-consumer_action_advance_viewcart = ['search for product', #step1
-                   'view cart', #step1
-                   'remove products from cart', #step2
-                   'purchase products from cart', #step2
-                   'view order history',
-                   'rate a farmer',
-                   'view past ratings']
+# consumer_action_advance_viewcart = ['search for product', #step1
+#                    'view cart', #step1
+#                    'remove products from cart', #step2
+#                    'purchase products from cart', #step2
+#                    'view order history',
+#                    'rate a farmer',
+#                    'view past ratings']
 
 # (server) if role == consumer:
 #             if consumer is now after 'search for product':
