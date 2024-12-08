@@ -1,9 +1,10 @@
+from .Role import Role
 from action_handler import *
 
-class Consumer():
-    def __init__(self, consumer_id, name, email, phone_number, address, password):
+class Consumer(Role):
+    def __init__(self, user_id, name, password, phone_number, email, address):
 
-        super().__init__(name, consumer_id, email, phone_number, address, password)
+        super().__init__(user_id, name, password, phone_number, email, address)
 
         self.user_action = {
                                 'search for product': get_available_products,
@@ -13,6 +14,7 @@ class Consumer():
                                 'purchase product from cart': purchase_products,
                                 'view order history': get_consumer_order_history,
                                 'rate a farmer': add_consumer_rating,
-                                'view past ratings': get_consumer_ratings
+                                'view past ratings': get_consumer_ratings,
+                                'leave system':exit
                            }
         
