@@ -4,7 +4,6 @@ from os.path import isfile, getsize
 
 conn_ip = "127.0.0.1"
 conn_port = 8888
-1
 client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP
 client_socket.connect((conn_ip, conn_port))
 
