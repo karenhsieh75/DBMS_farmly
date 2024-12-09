@@ -209,17 +209,24 @@ def register_market_db(conn, farmer_id, market_id):
 
     # 檢查市集是否符合條件（加鎖：For Update）
     check_market_query = """
-        SELECT COUNT(s.stall_id) - COUNT(sf.farmer_id) AS available_stalls
-        FROM Market m
-        JOIN Stall s ON m.market_id = s.market_id
-        LEFT JOIN Stall_assign_farmer sf ON s.stall_id = sf.stall_id
-        WHERE m.market_id = %s
-          AND m.start_date > CURRENT_DATE
-        GROUP BY m.market_id
-        HAVING COUNT(s.stall_id) - COUNT(sf.farmer_id) > 0
+        WITH StallCounts AS (
+            SELECT m.market_id,
+                   COUNT(s.stall_id) AS total_stalls,
+                   COUNT(sf.farmer_id) AS allocated_stalls
+            FROM Market m
+            JOIN Stall s ON m.market_id = s.market_id
+            LEFT JOIN Stall_assign_farmer sf ON s.stall_id = sf.stall_id
+            WHERE m.market_id = %s
+              AND m.start_date > CURRENT_DATE
+            GROUP BY m.market_id
+        )
+        SELECT sc.market_id
+        FROM StallCounts sc
+        WHERE sc.market_id = %s
+          AND (sc.total_stalls - sc.allocated_stalls) > 0
         FOR UPDATE;
     """
-    cur.execute(check_market_query, [market_id])
+    cur.execute(check_market_query, [market_id, market_id])
     result = cur.fetchone()
 
     # 如果市集不符合條件，則 rollback
@@ -377,14 +384,19 @@ def add_to_cart_db(conn, consumer_id, product_id, quantity):
 
     # 1：檢查存貨是否足夠
     check_stock_query = """
-        SELECT SUM(pu.upload_quantity) - COALESCE(SUM(ocp.quantity), 0) AS available_stock
-        FROM Product_upload_Batch pu
-        LEFT JOIN Order_contain_product ocp ON pu.product_id = ocp.product_id
-        WHERE pu.product_id = %s
-        GROUP BY pu.product_id
-        HAVING SUM(pu.upload_quantity) - COALESCE(SUM(ocp.quantity), 0) >= %s
-        FOR UPDATE;
-    """
+            WITH AvailableStock AS (
+                SELECT pu.product_id,
+                       SUM(pu.upload_quantity) - COALESCE(SUM(ocp.quantity), 0) AS available_stock
+                FROM Product_upload_Batch pu
+                LEFT JOIN Order_contain_product ocp ON pu.product_id = ocp.product_id
+                WHERE pu.product_id = %s
+                GROUP BY pu.product_id
+            )
+            SELECT product_id
+            FROM AvailableStock
+            WHERE available_stock >= %s
+            FOR UPDATE;
+        """
     cur.execute(check_stock_query, [product_id, quantity])
     result = cur.fetchone()
 
@@ -497,13 +509,18 @@ def purchase_products_db(conn, consumer_id, product_quantities, payment_type, sh
         # 1：檢查所有商品庫存(加鎖)
         for product_id, quantity in product_quantities.items():
             check_stock_query = """
-                SELECT SUM(pu.upload_quantity) - COALESCE(SUM(ocp.quantity), 0) AS available_stock
+            WITH AvailableStock AS (
+                SELECT pu.product_id,
+                       SUM(pu.upload_quantity) - COALESCE(SUM(ocp.quantity), 0) AS available_stock
                 FROM Product_upload_Batch pu
                 LEFT JOIN Order_contain_product ocp ON pu.product_id = ocp.product_id
                 WHERE pu.product_id = %s
                 GROUP BY pu.product_id
-                HAVING SUM(pu.upload_quantity) - COALESCE(SUM(ocp.quantity), 0) >= %s
-                FOR UPDATE;
+            )
+            SELECT product_id
+            FROM AvailableStock
+            WHERE available_stock >= %s
+            FOR UPDATE;
             """
             cur.execute(check_stock_query, [product_id, quantity])
             result = cur.fetchone()
@@ -517,6 +534,13 @@ def purchase_products_db(conn, consumer_id, product_quantities, payment_type, sh
             cur.execute("SELECT price FROM Product_batch WHERE product_id = %s", [product_id])
             price = cur.fetchone()[0]
             total_price += price * quantity
+
+            # 在購物車裡面插入減少紀錄
+            insert_cart_decrease_query = """
+                INSERT INTO Consumer_alter_Cart (consumer_id, product_id, alter_type, alter_quantity, alter_time)
+                VALUES (%s, %s, 'Decrease', %s, NOW());
+            """
+            cur.execute(insert_cart_decrease_query, [consumer_id, product_id, quantity])
 
         # 2：插入訂單
         create_order_query = """

@@ -205,6 +205,7 @@ def add_to_cart(conn, user):
     product_id = read_input(conn, "the product ID of the item you'd like to add to your cart")
     quantity = read_input(conn, "the quantity of the product you'd like to add to your cart")
     add_to_cart_db(conn, user.get_user_id(), product_id, quantity)
+    get_cart_contents_db(conn, user.get_user_id())
     return
 
 
