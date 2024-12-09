@@ -373,7 +373,7 @@ def get_available_products_db(conn, product_type, exp_date):
 def add_to_cart_db(conn, consumer_id, product_id, quantity):
 
     # 交易開始
-    db.autocommit = False
+    # db.autocommit = False
 
     # 1：檢查存貨是否足夠
     check_stock_query = """
@@ -391,7 +391,7 @@ def add_to_cart_db(conn, consumer_id, product_id, quantity):
     # 若存貨不足，則rollback
     if not result:
         db.rollback()
-        db.autocommit = True
+        # db.autocommit = True
         print(f"product #{product_id} inventory not enough")
         return False
 
@@ -403,7 +403,7 @@ def add_to_cart_db(conn, consumer_id, product_id, quantity):
     cur.execute(insert_cart_query, [consumer_id, product_id, quantity])
 
     db.commit()
-    db.autocommit = True
+    # db.autocommit = True
     conn.send(f"product #{product_id} x {quantity} successfully added to cart\n".encode('utf-8'))
     return True
 
@@ -431,7 +431,7 @@ def get_cart_contents_db(conn, consumer_id):
 def remove_from_cart_db(conn, consumer_id, product_id, quantity):
 
     # 交易開始
-    db.autocommit = False
+    #db.autocommit = False
 
     # 1：檢查現有數量是否足夠減少
     check_quantity_query = """
@@ -447,7 +447,7 @@ def remove_from_cart_db(conn, consumer_id, product_id, quantity):
     # 若數量不足，則rollback
     if not result:
         db.rollback()
-        db.autocommit = True
+        #db.autocommit = True
         print(f"product #{product_id} amount in cart not enough to reduce {quantity}.")
         return False
 
@@ -459,7 +459,7 @@ def remove_from_cart_db(conn, consumer_id, product_id, quantity):
     cur.execute(insert_cart_query, [consumer_id, product_id, quantity])
 
     db.commit()
-    db.autocommit = True
+    #db.autocommit = True
     conn.send(f"successfully reduced product {quantity} of product #{product_id} from cart.\n".encode('utf-8'))
     return True
 
@@ -477,7 +477,7 @@ def check_if_productid_in_cart_db(conn, consumer_id, product_id):
     cart_products = [row[0] for row in cur.fetchall()]  # 取得所有的 product_id
 
     # 2：檢查輸入的 product_id 是否在購物車內
-    if product_id in cart_products:
+    if int(product_id) in cart_products:
         return True  # Product is in cart
     else:
         conn.send(f"Product #{product_id} is not in your cart. Please add it to your cart first.\n".encode('utf-8'))
@@ -490,7 +490,7 @@ def purchase_products_db(conn, consumer_id, product_quantities, payment_type, sh
     """
     try:
         # 交易開始
-        db.autocommit = False
+        #db.autocommit = False
 
         total_price = 0
 
@@ -537,13 +537,13 @@ def purchase_products_db(conn, consumer_id, product_quantities, payment_type, sh
 
         # 交易結束
         db.commit()
-        db.autocommit = True
+        # db.autocommit = True
         conn.send(f"Successfully placed order #{order_id}:\n consumer_id:{consumer_id}, product_quantities:{product_quantities}, payment_type:{payment_type}, shipping_address:{shipping_address}, shipping_type:{shipping_type}\n".encode('utf-8'))
         return True
 
     except Exception as e:
         db.rollback()
-        db.autocommit = True
+        # db.autocommit = True
         conn.send(f"Error: {e}\n".encode('utf-8'))
         return False
 

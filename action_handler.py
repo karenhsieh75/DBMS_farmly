@@ -204,7 +204,7 @@ def get_available_products(conn, user):
 def add_to_cart(conn, user):
     product_id = read_input(conn, "the product ID of the item you'd like to add to your cart")
     quantity = read_input(conn, "the quantity of the product you'd like to add to your cart")
-    add_to_cart_db(user.get_user_id(), product_id, quantity)
+    add_to_cart_db(conn, user.get_user_id(), product_id, quantity)
     return
 
 
@@ -216,7 +216,7 @@ def get_cart_contents(conn, user):
 def remove_from_cart(conn, user):
     product_id = read_input(conn, "the product ID of the item you'd like to remove from your cart")
     quantity = read_input(conn, "the quantity of the product you'd like to remove from your cart")
-    remove_from_cart_db(user.get_user_id(), product_id, quantity)
+    remove_from_cart_db(conn, user.get_user_id(), product_id, quantity)
     return
 
 
@@ -228,7 +228,7 @@ def purchase_products(conn, user):
         product_id = read_input(conn, "the product ID you'd like to purchase, type 'end' to end product selection")
         if product_id == 'end':
             break    
-        elif not check_if_productid_in_cart_db(user.get_user_id(), product_id):
+        elif not check_if_productid_in_cart_db(conn, user.get_user_id(), product_id):
             continue  # 讓用戶再次輸入
         quantity = int(read_input(conn, f"the quantity of product #{product_id} you'd like to purchase"))
         product_quantities[product_id] = quantity
@@ -236,7 +236,7 @@ def purchase_products(conn, user):
     payment_type = read_input(conn, "your payment type (select between Card, Bank Transfer or Line Pay)")
     shipping_address = read_input(conn, "your shipping address")
     shipping_type = read_input(conn, "your shipping type (select between Standard, Refrigerated or Frozen)")
-    purchase_products_db(user.get_user_id(), product_quantities, payment_type, shipping_address, shipping_type)
+    purchase_products_db(conn, user.get_user_id(), product_quantities, payment_type, shipping_address, shipping_type)
     return
 
 
@@ -251,7 +251,7 @@ def add_consumer_rating(conn, user):
     comment = read_input(conn, "your comment (optional)")
 
     # 呼叫資料庫操作的函數
-    add_consumer_rating_db(user.get_user_id(), farmer_id, rating, comment)
+    add_consumer_rating_db(conn, user.get_user_id(), farmer_id, rating, comment)
     return
 
 def get_consumer_ratings(conn, user):

@@ -8,7 +8,7 @@ class Consumer(Role):
 
         self.user_action = {
                                 'search for product': get_available_products,
-                                'add this product to cart': add_to_cart,
+                                'add product to cart': add_to_cart,
                                 'view cart': get_cart_contents,
                                 'remove some products from cart': remove_from_cart,
                                 'purchase product from cart': purchase_products,
