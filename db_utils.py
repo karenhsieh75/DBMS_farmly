@@ -2,11 +2,18 @@ import sys
 import psycopg2
 from tabulate import tabulate
 from threading import Lock
+from dotenv import load_dotenv
+import os
 
-DB_NAME = "Farmly"
-DB_USER = "postgres"
-DB_HOST = "127.0.0.1"
-DB_PORT = 5432
+# 載入 .env 文件中的環境變數
+load_dotenv()
+
+# 讀取環境變數
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = os.getenv("DB_PORT")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
 
 cur = None
 db = None
@@ -16,7 +23,7 @@ def db_connect():
 
     try:
         global db
-        db = psycopg2.connect(database=DB_NAME, user=DB_USER, password='password', 
+        db = psycopg2.connect(database=DB_NAME, user=DB_USER, password=DB_PASSWORD, 
                               host=DB_HOST, port=DB_PORT)
         print("Successfully connect to DBMS.")
         global cur
@@ -615,6 +622,5 @@ def get_consumer_ratings_db(conn, consumer_id):
             Order By crf.rate_date DESC;
             """
     cur.execute(query, [consumer_id])
-    print(f'{consumer_id}')
     print_table(cur,conn)
     return 

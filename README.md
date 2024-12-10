@@ -8,22 +8,59 @@
 ## 使用者功能
 
 ## 使用方式
-- 使用備份檔 farmly.backup 復原資料庫
-- 預設連線通道為 IP：127.0.0.1、Port：8888，可至 server.py 及 client.py 修改
-- 在 DB_utils.py 設定資料庫名稱 (DB_NAME)、使用者名稱 (DB_USER)、主機位置 (DB_HOST) 及通訊埠 (DB_PORT)
-- 先執行 `server.py` 啟動伺服器：
+1. 使用備份檔 `farmly.backup` 復原資料庫
+2. 輸入以下指令
+
+  ```
+  pip install -r requirements.txt
+  ```
+
+3. 輸入以下指令
+
+  ```
+  cp .env.example .env
+  ```
+
+3. 修改 `.env` 中的資料庫資訊，包含資料庫名稱 (DB_NAME)、使用者名稱 (DB_USER)、主機位置 (DB_HOST) 、通訊埠 (DB_PORT) 及密碼 (DB_PASSWORD)
+
+  ```
+  DB_NAME="farmly"
+  DB_USER="postgres"
+  DB_HOST="127.0.0.1"
+  DB_PORT=5432
+  DB_PASSWORD="your_password"
+  ```
+4. 預設連線通道如下，可至 server.py 及 client.py 修改
+
+  ```
+  IP = 127.0.0.1
+  PORT = 8888
+  ```
+
+5. 先執行 `server.py` 啟動伺服器：
   
   ```
-  python3 server.py
+  python server.py
   ```
-- 再透過 `client.py` 向伺服器連線：
+
+6. 再透過 `client.py` 向伺服器連線：
   
   ```
-  python3 client.py
+  python client.py
   ```
+
+7. 開始使用 Farmly!
 
 ## 技術細節
 - 使用 Socket 建立 client-server 連線，搭配 Multithreading 達成多人同時連線
 - 資料庫使用 PostgreSQL，使用套件 Psycopg2 對資料庫進行操作
 - **交易管理**
 - **並行控制**
+
+## 開發環境
+- macOS 14.5
+- Python: 3.11.6
+  - psycopg2: 2.9.9
+  - tabulate: 0.9.0
+  - python-dotenv: 1.0.1
+- PostgreSQL: 14.13
