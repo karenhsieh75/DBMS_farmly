@@ -272,7 +272,7 @@ def get_farmer_ratings_db(conn, farmer_id):
             SELECT rate_date,
                    consumer_id,
                    rating,
-                   comment
+                   crf.comment
             FROM Consumer_rate_Farmer AS crf
             WHERE farmer_id = %s
             ORDER BY rating DESC, rate_date DESC;
@@ -610,15 +610,11 @@ def add_consumer_rating_db(conn, consumer_id, farmer_id, rating, comment):
 def get_consumer_ratings_db(conn, consumer_id):
 
     query = """
-            SELECT crf.rate_date,
-                   f.name AS farmer_name,
-                   crf.rating,
-                   crf.comment
-            FROM Consumer_rate_Farmer AS crf
-            JOIN Farmer AS f ON crf.farmer_id = f.farmer_id
+            SELECT * FROM public.consumer_rate_farmer AS crf
             WHERE crf.consumer_id = %s
-            ORDER BY crf.rate_date DESC;
+            Order By crf.rate_date DESC;
             """
     cur.execute(query, [consumer_id])
+    print(f'{consumer_id}')
     print_table(cur,conn)
     return 
