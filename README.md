@@ -152,7 +152,7 @@
 ## 開發環境
 - macOS 14.5
 - Python: 3.11.6
-  - psycopg2: 2.9.9
+  - psycopg2: 2.9.10
   - tabulate: 0.9.0
   - python-dotenv: 1.0.1
 - PostgreSQL: 14.13
