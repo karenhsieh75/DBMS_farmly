@@ -29,8 +29,7 @@ def handle_connection(conn, client_addr):
             else:
                 print(f"{action_str} does not exist.")
 
-            print("return to server")
-            print(user.get_username())
+
             if user == -1:
                 raise Exception("End connection")
             
