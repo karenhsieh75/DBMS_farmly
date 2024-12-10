@@ -1,49 +1,5 @@
 from db_utils import *        
 
-
-# consumer_action_basic = ['search for product', #step1
-#                    'view cart', #step1
-#                    'view order history',
-#                    'rate a farmer',
-#                    'view past ratings']
-
-# consumer_action_advance_searchforproduct = ['search for product', #step1
-#                    'add this product to cart', #step2
-#                    'view cart', #step1
-#                    'view order history',
-#                    'rate a farmer',
-#                    'view past ratings']
-
-# consumer_action_advance_viewcart = ['search for product', #step1
-#                    'view cart', #step1
-#                    'remove products from cart', #step2
-#                    'purchase products from cart', #step2
-#                    'view order history',
-#                    'rate a farmer',
-#                    'view past ratings']
-
-# (server) if role == consumer:
-#             if consumer is now after 'search for product':
-#                 consumer_action_list = consumer_action_advance_searchforproduct
-#             elif consumer is now after 'view cart':
-#                 consumer_action_list = consumer_action_advance_viewcart
-#             else:
-#                 consumer_action_list = consumer_action_basic
-# (server) conn.send(f'[INPUT]Please choose a following action :\n{list_option(consumer_action_list)}---> '.encode('utf-8'))
-# (server) get_selection(conn, consumer_action)
-# (server) 呼叫相應的函式 consumer_action = {"search for product":get_available_products(),get_available_products_db()
-#                    "add this product to cart":add_to_cart(),add_to_cart_db()
-#                    "view cart":get_cart_contents(),get_cart_contents_db()
-#                    "remove some products from cart":remove_from_cart(),remove_from_cart_db()
-#                    "purchase product from cart":purchase_products(),purchase_products_db()
-#                    "view order history":get_consumer_order_history(),get_consumer_order_history_db()
-#                    "rate a farmer":add_consumer_rating(),add_consumer_rating_db()
-#                    "view past ratings":get_consumer_ratings(),get_consumer_ratings_db()
-# }
-
-    
-
-
 def list_option(list):
     list_string = '\n'.join(list)
     return list_string
